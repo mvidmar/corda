@@ -8,7 +8,6 @@ import net.corda.core.messaging.startFlow
 import net.corda.core.node.services.ServiceInfo
 import net.corda.core.random63BitValue
 import net.corda.core.serialization.OpaqueBytes
-import net.corda.flows.CashCommand
 import net.corda.flows.CashFlow
 import net.corda.node.internal.Node
 import net.corda.node.services.User
@@ -61,7 +60,7 @@ class CordaRPCClientTest : NodeBasedTest() {
         println("Starting flow")
         val flowHandle = proxy.startFlow(
                 ::CashFlow,
-                CashCommand.IssueCash(20.DOLLARS, OpaqueBytes.of(0), node.info.legalIdentity, node.info.legalIdentity))
+                CashFlow.Command.IssueCash(20.DOLLARS, OpaqueBytes.of(0), node.info.legalIdentity, node.info.legalIdentity))
         println("Started flow, waiting on result")
         flowHandle.progress.subscribe {
             println("PROGRESS $it")

@@ -12,6 +12,7 @@ import joptsimple.OptionParser
 import net.corda.client.mock.EventGenerator
 import net.corda.client.model.Models
 import net.corda.client.model.observableValue
+import net.corda.flows.CashFlow
 import net.corda.core.contracts.GBP
 import net.corda.core.contracts.USD
 import net.corda.core.messaging.startFlow
@@ -21,7 +22,7 @@ import net.corda.explorer.model.CordaViewModel
 import net.corda.explorer.model.SettingsModel
 import net.corda.explorer.views.*
 import net.corda.explorer.views.cordapps.cash.CashViewer
-import net.corda.flows.CashFlow
+import net.corda.flows.CashPaymentFlow
 import net.corda.flows.IssuerFlow.IssuanceRequester
 import net.corda.node.driver.PortAllocation
 import net.corda.node.driver.driver
@@ -107,8 +108,8 @@ class Main : App(MainView::class) {
 fun main(args: Array<String>) {
     val portAllocation = PortAllocation.Incremental(20000)
     driver(portAllocation = portAllocation) {
-        val user = User("user1", "test", permissions = setOf(startFlowPermission<CashFlow>()))
-        val manager = User("manager", "test", permissions = setOf(startFlowPermission<CashFlow>(), startFlowPermission<IssuanceRequester>()))
+        val user = User("user1", "test", permissions = setOf(startFlowPermission<CashPaymentFlow>()))
+        val manager = User("manager", "test", permissions = setOf(startFlowPermission<CashPaymentFlow>(), startFlowPermission<IssuanceRequester>()))
         // TODO : Supported flow should be exposed somehow from the node instead of set of ServiceInfo.
         val notary = startNode("Notary", advertisedServices = setOf(ServiceInfo(SimpleNotaryService.type)),
                                     customOverrides = mapOf("nearestCity" to "Zurich"))
