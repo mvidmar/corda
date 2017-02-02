@@ -1,5 +1,6 @@
 package net.corda.node.services.identity
 
+import net.corda.core.crypto.AnonymousParty
 import net.corda.core.crypto.CompositeKey
 import net.corda.core.crypto.Party
 import net.corda.core.node.services.IdentityService
