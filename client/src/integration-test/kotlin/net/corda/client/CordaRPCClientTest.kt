@@ -8,7 +8,8 @@ import net.corda.core.messaging.startFlow
 import net.corda.core.node.services.ServiceInfo
 import net.corda.core.random63BitValue
 import net.corda.core.serialization.OpaqueBytes
-import net.corda.flows.CashFlow
+import net.corda.flows.CashIssueFlow
+import net.corda.flows.CashPaymentFlow
 import net.corda.node.internal.Node
 import net.corda.node.services.User
 import net.corda.node.services.config.configureTestSSL
@@ -22,7 +23,10 @@ import org.junit.Before
 import org.junit.Test
 
 class CordaRPCClientTest : NodeBasedTest() {
-    private val rpcUser = User("user1", "test", permissions = setOf(startFlowPermission<CashFlow>()))
+    private val rpcUser = User("user1", "test", permissions = setOf(
+        startFlowPermission<CashIssueFlow>(),
+        startFlowPermission<CashPaymentFlow>()
+    ))
     private lateinit var node: Node
     private lateinit var client: CordaRPCClient
 
@@ -59,8 +63,8 @@ class CordaRPCClientTest : NodeBasedTest() {
         val proxy = client.proxy()
         println("Starting flow")
         val flowHandle = proxy.startFlow(
-                ::CashFlow,
-                CashFlow.Command.IssueCash(20.DOLLARS, OpaqueBytes.of(0), node.info.legalIdentity, node.info.legalIdentity))
+                ::CashIssueFlow,
+                20.DOLLARS, OpaqueBytes.of(0), node.info.legalIdentity, node.info.legalIdentity)
         println("Started flow, waiting on result")
         flowHandle.progress.subscribe {
             println("PROGRESS $it")
@@ -72,10 +76,10 @@ class CordaRPCClientTest : NodeBasedTest() {
     fun `FlowException thrown by flow`() {
         client.start(rpcUser.username, rpcUser.password)
         val proxy = client.proxy()
-        val handle = proxy.startFlow(::CashFlow, CashCommand.PayCash(
-                amount = 100.DOLLARS.issuedBy(node.info.legalIdentity.ref(1)),
-                recipient = node.info.legalIdentity
-        ))
+        val handle = proxy.startFlow(::CashPaymentFlow,
+                100.DOLLARS.issuedBy(node.info.legalIdentity.ref(1)),
+                node.info.legalIdentity
+        )
         // TODO Restrict this to CashException once RPC serialisation has been fixed
         assertThatExceptionOfType(FlowException::class.java).isThrownBy {
             handle.returnValue.getOrThrow()
