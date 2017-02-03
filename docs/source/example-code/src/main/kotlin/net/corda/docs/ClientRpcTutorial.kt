@@ -42,7 +42,9 @@ fun main(args: Array<String>) {
     val printOrVisualise = PrintOrVisualise.valueOf(args[0])
 
     val baseDirectory = Paths.get("build/rpc-api-tutorial")
-    val user = User("user", "password", permissions = setOf(startFlowPermission<CashPaymentFlow>()))
+    val user = User("user", "password", permissions = setOf(startFlowPermission<CashIssueFlow>(),
+            startFlowPermission<CashPaymentFlow>(),
+            startFlowPermission<CashExitFlow>()))
 
     driver(driverDirectory = baseDirectory) {
         startNode("Notary", advertisedServices = setOf(ServiceInfo(ValidatingNotaryService.type)))
