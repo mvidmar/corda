@@ -195,11 +195,11 @@ interface VaultService {
     fun generateSpend(tx: TransactionBuilder,
                       amount: Amount<Currency>,
                       to: CompositeKey,
-                      onlyFromParties: Set<AnonymousParty>? = null): Pair<TransactionBuilder, List<CompositeKey>>
+                      onlyFromParties: Set<AbstractParty>? = null): Pair<TransactionBuilder, List<CompositeKey>>
 }
 
 inline fun <reified T : LinearState> VaultService.linearHeadsOfType() = linearHeadsOfType_(T::class.java)
-inline fun <reified T : DealState> VaultService.dealsWith(party: AnonymousParty) = linearHeadsOfType<T>().values.filter {
+inline fun <reified T : DealState> VaultService.dealsWith(party: AbstractParty) = linearHeadsOfType<T>().values.filter {
     it.state.data.parties.any { it == party }
 }
 
