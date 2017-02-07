@@ -13,7 +13,7 @@ open class AnonymousParty(val owningKey: CompositeKey) {
     constructor(owningKey: PublicKey) : this(owningKey.composite)
 
     /** Anonymised parties do not include any detail apart from owning key, so equality is dependent solely on the key */
-    override fun equals(other: Any?): Boolean = other is Party && this.owningKey == other.owningKey
+    override fun equals(other: Any?): Boolean = other is AnonymousParty && this.owningKey == other.owningKey
     override fun hashCode(): Int = owningKey.hashCode()
     override fun toString() = owningKey.toBase58String()
 

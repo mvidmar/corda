@@ -25,7 +25,7 @@ interface IdentityService {
 
     fun partyFromKey(key: CompositeKey): Party?
     fun partyFromName(name: String): Party?
-}
 
-fun IdentityService.deanonymiseParty(party: AnonymousParty) = partyFromKey(party.owningKey)
-fun IdentityService.deanonymiseParty(partyRef: PartyAndReference) = partyFromKey(partyRef.party.owningKey)
+    fun partyFromAnonymous(party: AnonymousParty): Party?
+    fun partyFromAnonymous(partyRef: PartyAndReference) = partyFromAnonymous(partyRef.party)
+}
